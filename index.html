@@ -8,75 +8,130 @@
   <meta name="theme-color" content="#FF8C00" />
 
   <style>
-    /* ---------- Simple reset ---------- */
+    /* Reset & base */
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html,body { height: 100%; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; color:#111; }
+    html,body { height: 100%; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; color:#111; -webkit-font-smoothing:antialiased; }
     a { color: inherit; text-decoration: none; }
+/* --- keep hamburger/top nav in the top-right on small screens --- */
+@media (max-width: 799px) {
+  header {
+    position: relative; /* allow absolute positioning of the menu button */
+  }
 
-    /* ---------- Color palette ---------- */
+  /* pin the hamburger to the top-right */
+  .menu-btn {
+    position: absolute;
+    right: 12px;
+    top: 14px;         /* align with your header padding */
+    z-index: 30;
+  }
+
+  /* give the brand some right padding so text doesn't sit under the button */
+  .brand {
+    padding-right: 64px; /* matches menu-btn width + gap */
+    min-width: 0;        /* allow text truncation if needed */
+    flex: 1 1 auto;
+  }
+
+  /* optional: make brand text truncate instead of wrapping to multiple lines */
+  .brand h1,
+  .brand .tiny {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
     :root{
-      --orange: #ff7a00;   /* richer orange */
-      --orange-2: #ffaf66; /* lighter gradient stop */
+      --orange: #FF8C00;
       --green:  #008F3E;
-      --muted:  #6b7280; 
+      --muted:  #4a5568;
       --card:   #ffffff;
-      --glass:  rgba(255,255,255,0.85);
       --maxw:   1100px;
-      
+      --radius: 12px;
     }
 
-    /* ---------- Layout & Global Styles ---------- */
-    .container { max-width: var(--maxw); margin: 0 auto; padding: 24px; }
-    header { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:18px 0; flex-wrap: wrap; }
+    .container { max-width: var(--maxw); margin: 0 auto; padding: 20px; }
+
+    /* Header */
+    header { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:18px 0; flex-wrap:wrap; }
     .brand { display:flex; align-items:center; gap:12px; }
-    .logo-mark { width:56px; height:56px; border-radius:12px; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,var(--orange),var(--orange-2)); color:white; font-weight:700; flex-shrink:0; box-shadow: 0 6px 18px rgba(0,0,0,0.08); }
-    .brand h1 { font-size:20px; letter-spacing:0.2px; }
-    nav { display:flex; gap:12px; align-items:center; flex-grow: 1; justify-content: flex-end; }
-    nav a:not(#whatsappTop) { display: none; }
+    .logo-mark { width:56px; height:56px; border-radius:10px; display:flex; align-items:center; justify-content:center; background:#fff4e6; }
+    .brand h1 { font-size:18px; letter-spacing:0.2px; }
+    .brand .tiny { font-size:12px; color:var(--muted); }
+
+    /* ====== NAV / mobile menu (updated) ====== */
+    .nav-wrap { display:flex; align-items:center; gap:12px; }
+
+    /* container for links — hidden on small screens; toggled via .open */
+    .nav-links {
+      display: none;
+      gap: 12px;
+      align-items: center;
+    }
+
+    /* when open on mobile */
+    .nav-links.open {
+      display: flex;
+      flex-direction: column;
+      background: transparent;
+      padding: 12px 0;
+    }
+
+    /* style for link blocks on mobile so they are touch-friendly */
+    .nav-links a { display: block; padding: 8px 10px; border-radius: 8px; }
+
+    /* Desktop: show links inline */
+    @media(min-width:800px){
+      .nav-links { display:flex !important; flex-direction: row; }
+      .nav-links a { display: inline-block; padding: 0; }
+    }
 
     .muted { color:var(--muted); font-size:14px; }
-    .tiny { font-size:13px; color:var(--muted); margin-top:8px; }
+    .tiny { font-size:13px; color:var(--muted); margin-top:6px; }
 
-    .hero { background: linear-gradient(180deg, #fff 0%, #fff 60%); padding:36px 0; display:flex; gap:32px; align-items:center; }
+    /* Mobile menu button */
+    .menu-btn { display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:8px; border:1px solid #eee; background:#fff; cursor:pointer; }
+
+    /* Hero */
+    .hero { background: linear-gradient(180deg, #fff 0%, #fff 60%); padding:28px 0; display:flex; gap:24px; align-items:center; }
     .hero-grid { display:grid; grid-template-columns: 1fr; gap:20px; }
-    .eyebrow { display:inline-block; background:var(--orange); color:white; padding:6px 10px; border-radius:20px; font-weight:600; font-size:13px; }
-    .headline { font-size:32px; font-weight:800; line-height:1.05; margin-top:8px; }
-    .sub { color:var(--muted); margin-top:10px; font-size:16px; }
-    .cta-row { display:flex; gap:12px; margin-top:18px; flex-wrap:wrap; }
+    .eyebrow { display:inline-block; background:var(--orange); color:white; padding:6px 10px; border-radius:20px; font-weight:700; font-size:13px; }
+    .headline { font-size:28px; font-weight:800; line-height:1.05; margin-top:8px; }
+    .sub { color:var(--muted); margin-top:10px; font-size:15px; }
+    .cta-row { display:flex; gap:12px; margin-top:14px; flex-wrap:wrap; }
 
-    .btn { display:inline-flex; align-items:center; gap:10px; padding:12px 16px; border-radius:10px; font-weight:700; cursor:pointer; border: none; }
+    /* Buttons */
+    .btn { display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:10px; font-weight:700; cursor:pointer; border: none; }
+    .btn img.whatsapp-icon { width:18px; height:18px; }
     .btn-primary { background:var(--orange); color:white; }
     .btn-ghost { background:transparent; color:var(--orange); border:2px solid var(--orange); }
 
-    .wh-icon { width:18px; height:18px; display:inline-block; vertical-align:middle; }
-
-    .grid-3 { display:grid; gap:18px; grid-template-columns: repeat(1, 1fr); }
-    .card { background:var(--card); padding:18px; border-radius:12px; box-shadow: 0 6px 18px rgba(16,24,40,0.06); }
+    .grid-3 { display:grid; gap:14px; grid-template-columns: 1fr; }
+    .card { background:var(--card); padding:14px; border-radius:var(--radius); box-shadow: 0 6px 18px rgba(16,24,40,0.06); }
     .card h3 { font-size:18px; margin-bottom:8px; }
 
-    .steps { display:grid; gap:14px; grid-template-columns: 1fr; margin-top:10px; }
+    .steps { display:grid; gap:12px; grid-template-columns: 1fr; margin-top:10px; }
     .step { display:flex; gap:12px; align-items:flex-start; }
 
     .form { margin-top:8px; display:flex; gap:10px; flex-wrap:wrap; }
     .input { padding:10px 12px; border-radius:8px; border:1px solid #e6e6e9; min-width:100%; }
     .form button { min-width: 100%; }
 
-    footer { margin-top:36px; padding:22px 0; border-top:1px solid #eee; display:flex; justify-content:space-between; gap:16px; align-items:center; flex-wrap:wrap; text-align: center; }
-    footer > div { flex: 1 1 100%; }
-    .socials { display:flex; gap:12px; align-items:center; justify-content: center; }
+    /* FAQ + footer backgrounds */
+    #faq { background: #f8fafc; padding: 20px; border-radius: 12px; margin-top: 28px; box-shadow: 0 6px 18px rgba(16,24,40,0.03); }
+    #faq .card { background: #ffffff; box-shadow: 0 6px 18px rgba(16,24,40,0.04); }
 
     .badge { background:#eef6f0; color:var(--green); padding:6px 10px; border-radius:999px; font-weight:700; font-size:13px; display:inline-block; }
-    .price { font-weight:800; font-size:22px; color:var(--green); }
+    .price { font-weight:800; font-size:20px; color:var(--green); }
     .center { text-align:center; }
 
+    footer { background: #ffffff; padding: 22px; border-top: 1px solid #e9edf0; margin-top: 18px; border-radius: 8px; box-shadow: 0 -6px 18px rgba(16,24,40,0.02); }
+
+    /* Responsive breakpoints */
     @media(min-width:600px){
-        .container { padding: 32px; }
-        .input { min-width: auto; }
-        .form button { min-width: auto; }
-        .headline { font-size:40px; }
-        .form { justify-content: flex-start; }
-        footer > div { flex: 1; text-align: left; }
-        .socials { justify-content: flex-end; }
+        .container { padding: 28px; }
+        .headline { font-size:34px; }
     }
 
     @media(min-width:800px){
@@ -84,8 +139,6 @@
       .grid-3 { grid-template-columns: repeat(3, 1fr); }
       .steps { grid-template-columns: repeat(3, 1fr); }
       header { flex-wrap: nowrap; }
-      nav a:not(#whatsappTop) { display: block; }
-      nav { justify-content: flex-start; flex-grow: 0; }
       .headline { font-size:44px; }
     }
 
@@ -93,126 +146,137 @@
         .container { padding: 24px 0; }
     }
 
+    /* Utility */
+    .muted-small { color:var(--muted); font-size:13px; }
+    .visually-hidden { position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden; }
+
+    /* footer social styling (white circles with orange icons) */
+    .socials { display:flex; justify-content:center; gap:16px; align-items:center; margin-top:12px; }
+    .social-btn {
+      width:56px;
+      height:56px;
+      border-radius:50%;
+      background:#fff;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      text-decoration:none;
+      transition: transform .12s ease, box-shadow .12s ease;
+      box-shadow: 0 6px 18px rgba(16,24,40,0.06);
+    }
+    .social-img { width:26px; height:26px; display:block; }
+    .social-btn:hover { transform: translateY(-4px) scale(1.04); box-shadow: 0 10px 26px rgba(16,24,40,0.12); }
+
+    /* footer override: orange background and white text */
+    footer {
+      margin-top: 36px;
+      padding: 28px 0;
+      border-top: none;
+      text-align: center;
+      background: var(--orange);
+      color: #fff;
+    }
+
+    footer .footer-brand {
+      font-weight: 800;
+      margin-bottom: 4px;
+      font-size: 18px;
+    }
+
+    footer .muted {
+      font-size: 13px;
+      margin-bottom: 14px;
+      display: block;
+      color: #ffe9d2; /* softer white */
+    }
+
+    /* inline SVG icons inside .social-btn should use the orange brand color */
+    footer .social-btn svg { fill: var(--orange); width:26px; height:26px; }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
       <div class="brand">
-        <div class="logo-mark" aria-hidden="true" title="TagGoXpress logo">
-          <!-- Tweaked inline SVG: larger flame, richer gradient, darker parcel face -->
-          <svg viewBox="0 0 120 120" width="44" height="44" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="TagGoXpress logo">
+        <div class="logo-mark" aria-hidden="true" title="Fast Delivery Truck Logo">
+          <!-- SVG retained from original -->
+          <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Fast Truck Logo" width="56" height="56">
             <defs>
-              <linearGradient id="lg" x1="0" x2="1" y1="0" y2="1">
+              <linearGradient id="bgFast2" x1="0" y1="0" x2="1" y2="1">
                 <stop offset="0" stop-color="#ff7a00"/>
-                <stop offset="1" stop-color="#ffaf66"/>
+                <stop offset="1" stop-color="#ffb366"/>
               </linearGradient>
             </defs>
-
-            <!-- parcel box body -->
-            <g transform="translate(10,18) scale(0.8)">
-              <rect x="8" y="26" width="80" height="48" rx="6" fill="#f8f6f4" stroke="#e7e2de" stroke-width="1.5"/>
-              <rect x="12" y="30" width="36" height="12" rx="3" fill="#efece9"/>
-              <line x1="50" y1="30" x2="50" y2="72" stroke="#e6e1dd" stroke-width="2"/>
-              <!-- darker face for contrast -->
-              <rect x="8" y="26" width="80" height="8" fill="#f0c99b" opacity="0.9"/>
+            <rect x="4" y="4" width="112" height="112" rx="18" fill="url(#bgFast2)"/>
+            <g stroke="#000" stroke-width="4" stroke-linecap="round" fill="none">
+              <line x1="20" y1="65" x2="40" y2="65"/>
+              <line x1="20" y1="55" x2="35" y2="55"/>
+              <line x1="20" y1="75" x2="35" y2="75"/>
             </g>
-
-            <!-- bigger flame above the box (more dramatic) -->
-            <g transform="translate(60,8) scale(0.8) translate(-50,-50)">
-              <path d="M50 6c0 0-26 22-10 46c8 12 13 16 21 23c8-7 13-11 21-23C86 28 60 6 60 6s-5 9-10 6z" fill="#fff2ec" opacity="0.9"/>
-              <path d="M50 3c0 0-20 18-8 38c6 10 10 14 16 19c6-5 10-9 16-19c12-20-8-38-8-38s-4 7-16 0z" fill="#ffb366"/>
-              <path d="M50 0c0 0-14 12-6 24c4 7 7 10 11 14c4-4 7-7 11-14c8-12-6-24-6-24s-2 4-10 0z" fill="#ff7a00"/>
+            <g fill="#000">
+              <rect x="40" y="50" width="40" height="20" rx="3"/>
+              <rect x="70" y="40" width="20" height="20" rx="3"/>
             </g>
-
-            <!-- subtle rounded background -->
-            <rect x="4" y="4" width="112" height="112" rx="20" fill="url(#lg)" opacity="0.0"/>
+            <circle cx="50" cy="75" r="8" fill="#000"/>
+            <circle cx="80" cy="75" r="8" fill="#000"/>
           </svg>
         </div>
-
         <div>
           <h1>TagGoXpress</h1>
-          <div style="font-size:12px;color:var(--muted)">Mysuru ⇆ Bengaluru • Same-Day & Next-Day</div>
+          <div class="tiny">Mysuru ⇆ Bengaluru • Same-Day & Next-Day</div>
         </div>
       </div>
 
-      <nav>
-        <a class="tiny" href="#services">Services</a>
-        <a class="tiny" href="#how">How it works</a>
-        <a class="tiny" href="#traveller">Travellers</a>
-        <a class="tiny" href="#faq">FAQ</a>
+      <div class="nav-wrap">
+        <button id="menuToggle" class="menu-btn" aria-expanded="false" aria-controls="navLinks" title="Open menu">☰</button>
 
-        <a class="btn btn-primary" id="whatsappTop" href="#" role="button" aria-label="Book on WhatsApp">
-          <!-- inline WhatsApp SVG (white on orange) -->
-          <svg class="wh-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-            <path fill="#ffffff" d="M20.52 3.48A11.8 11.8 0 0012 0C5.37 0 .13 5.24.13 11.87c0 2.09.55 4.11 1.6 5.9L0 24l6.44-1.66c1.68.92 3.56 1.4 5.53 1.4h.01c6.63 0 11.87-5.24 11.87-11.87 0-3.17-1.23-6.15-3.33-8.59zM12 20.5c-1.74 0-3.4-.47-4.86-1.36l-.35-.21L5 19l1.06-1.76-.22-.37A7.96 7.96 0 014.13 12c0-4.42 3.58-8 8-8 4.43 0 8 3.58 8 8 0 4.42-3.57 8-8 8z"/>
-            <path fill="#ffffff" d="M7.8 8.9c-.17-.5.02-1.05.44-1.36.11-.08.25-.15.39-.15.18 0 .34.07.47.2l.31.31c.12.12.18.27.17.43-.01.09-.04.2-.08.28-.26.46-.08 1.05.4 1.32 1.2.61 2.66 1.22 4.06.72.3-.12.63-.09.9.07.07.04.12.09.16.15.25.35.38.74.38 1.15 0 1.03-.3 1.98-.91 2.81-.79 1.08-1.91 1.64-3.24 1.64-1.95 0-3.78-1.16-4.65-3.02-.45-.98-.5-2.14-.14-3.2z"/>
-          </svg>
-          <span style="margin-left:6px">Book on WhatsApp</span>
-        </a>
-      </nav>
+        <nav id="navLinks" class="nav-links" aria-label="Primary navigation">
+          <a class="tiny" href="#services">Services</a>
+          <a class="tiny" href="#how">How it works</a>
+          <a class="tiny" href="#traveller">Travellers</a>
+          <a class="tiny" href="#faq">FAQ</a>
+          
+          </a>
+        </nav>
+      </div>
     </header>
 
+    <!-- HERO -->
     <section class="hero" id="hero">
       <div class="hero-grid">
         <div>
           <div class="eyebrow">Same-Day & Next-Day</div>
-          <h2 class="headline">Delivered in hours, not days — <br/> Mysuru ⇆ Bengaluru</h2>
+          <h2 class="headline">Delivered in hours, not days — Mysuru ⇆ Bengaluru</h2>
           <p class="sub">We pick up from your doorstep in Mysuru and deliver to Bengaluru same day or next day. Book quickly on WhatsApp — no accounts, no queues.</p>
-
           <div class="cta-row">
-            <a class="btn btn-primary" id="bookNow" href="#" role="button" aria-label="Book Now on WhatsApp">
-              <svg class="wh-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-                <path fill="#ffffff" d="M20.52 3.48A11.8 11.8 0 0012 0C5.37 0 .13 5.24.13 11.87c0 2.09.55 4.11 1.6 5.9L0 24l6.44-1.66c1.68.92 3.56 1.4 5.53 1.4h.01c6.63 0 11.87-5.24 11.87-11.87 0-3.17-1.23-6.15-3.33-8.59zM12 20.5c-1.74 0-3.4-.47-4.86-1.36l-.35-.21L5 19l1.06-1.76-.22-.37A7.96 7.96 0 014.13 12c0-4.42 3.58-8 8-8 4.43 0 8 3.58 8 8 0 4.42-3.57 8-8 8z"/>
-                <path fill="#ffffff" d="M7.8 8.9c-.17-.5.02-1.05.44-1.36.11-.08.25-.15.39-.15.18 0 .34.07.47.2l.31.31c.12.12.18.27.17.43-.01.09-.04.2-.08.28-.26.46-.08 1.05.4 1.32 1.2.61 2.66 1.22 4.06.72.3-.12.63-.09.9.07.07.04.12.09.16.15.25.35.38.74.38 1.15 0 1.03-.3 1.98-.91 2.81-.79 1.08-1.91 1.64-3.24 1.64-1.95 0-3.78-1.16-4.65-3.02-.45-.98-.5-2.14-.14-3.2z"/>
-              </svg>
-              <span>Book Now on WhatsApp</span>
-            </a>
-
-            <a class="btn btn-ghost" href="#how" role="button">How it works</a>
+            <a class="btn btn-primary" id="bookNow" href="#"><img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/whatsapp.svg" class="whatsapp-icon" alt="WhatsApp"> Book Now on WhatsApp</a>
+            <a class="btn btn-ghost" href="#how">How it works</a>
           </div>
-
-          <div style="margin-top:14px" class="muted">
-            Ideal for: Food items, medicines, books, gifts, urgent documents.
-          </div>
+          <div style="margin-top:12px" class="muted-small">Ideal for: Food items, medicines, books, gifts, urgent documents.</div>
         </div>
 
-        <div>
-          <div class="card">
+        <!-- Right column quick cards -->
+        <aside>
+          <div class="card" style="margin-bottom:12px">
             <h3>Quick Options</h3>
-            <div class="muted">Choose the delivery option that fits you</div>
+            <div class="muted-small">Choose the delivery option that fits you</div>
             <div style="margin-top:12px">
               <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-                <div><strong>Same-Day</strong><div class="muted" style="font-size:13px">Door pickup → Door drop</div></div>
-                <div class="price"> Starting at ₹165</div>
+                <div><strong>Same-Day</strong><div class="muted-small" style="font-size:13px">Door pickup → Door drop</div></div>
+                <div class="price" style="font-size:16px">Starting at ₹160</div>
               </div>
               <div style="display:flex;align-items:center;justify-content:space-between">
-                <div><strong>Pickup → Station</strong><div class="muted" style="font-size:13px">Door pickup → Collect at station</div></div>
-                <div class="price">Starting at ₹120</div>
+                <div><strong>Pickup → Station</strong><div class="muted-small" style="font-size:13px">Door pickup → Collect at station</div></div>
+                <div class="price" style="font-size:16px">Starting at ₹120</div>
               </div>
             </div>
             <div style="margin-top:12px" class="tiny">* Prices shown are examples. Final price depends on weight & distance.</div>
           </div>
-
-          <div style="height:18px"></div>
-
-          <div class="card center">
-            <div style="font-weight:700">Traveller? Earn ₹50–₹70 / trip</div>
-            <div class="tiny" style="margin-top:6px">Carry parcels on your regular trip and get paid for simple handovers.</div>
-            <div style="margin-top:12px">
-              <a class="btn btn-primary" id="joinTraveller" href="#traveller" aria-label="Join as Traveller">
-                <svg class="wh-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-                  <path fill="#ffffff" d="M20.52 3.48A11.8 11.8 0 0012 0C5.37 0 .13 5.24.13 11.87c0 2.09.55 4.11 1.6 5.9L0 24l6.44-1.66c1.68.92 3.56 1.4 5.53 1.4h.01c6.63 0 11.87-5.24 11.87-11.87 0-3.17-1.23-6.15-3.33-8.59zM12 20.5c-1.74 0-3.4-.47-4.86-1.36l-.35-.21L5 19l1.06-1.76-.22-.37A7.96 7.96 0 014.13 12c0-4.42 3.58-8 8-8 4.43 0 8 3.58 8 8 0 4.42-3.57 8-8 8z"/>
-                  <path fill="#ffffff" d="M7.8 8.9c-.17-.5.02-1.05.44-1.36.11-.08.25-.15.39-.15.18 0 .34.07.47.2l.31.31c.12.12.18.27.17.43-.01.09-.04.2-.08.28-.26.46-.08 1.05.4 1.32 1.2.61 2.66 1.22 4.06.72.3-.12.63-.09.9.07.07.04.12.09.16.15.25.35.38.74.38 1.15 0 1.03-.3 1.98-.91 2.81-.79 1.08-1.91 1.64-3.24 1.64-1.95 0-3.78-1.16-4.65-3.02-.45-.98-.5-2.14-.14-3.2z"/>
-                </svg>
-                <span>Join as Traveller</span>
-              </a>
-            </div>
-          </div>
-        </div>
+        </aside>
       </div>
     </section>
 
+    <!-- SERVICES -->
     <section id="services" style="margin-top:26px">
       <div style="display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap">
         <h2>What we do</h2>
@@ -222,19 +286,20 @@
       <div class="grid-3" style="margin-top:18px">
         <div class="card">
           <h3>Door-to-Door (Same-Day)</h3>
-          <p class="muted">We pick up from your Mysuru doorstep and ensure delivery to Bengaluru within hours for urgent needs.</p>
+          <p class="muted-small">We pick up from your Mysuru doorstep and ensure delivery to Bengaluru within hours for urgent needs.</p>
         </div>
         <div class="card">
           <h3>Door pickup → Station (Same-Day)</h3>
-          <p class="muted">We pick up from you in Mysuru and hand over to a traveller/bus. Recipient collects at Bengaluru station.</p>
+          <p class="muted-small">We pick up from you in Mysuru and hand over to a traveller/bus. Recipient collects at Bengaluru station.</p>
         </div>
         <div class="card">
           <h3>Next-Day (Speed Post / Courier)</h3>
-          <p class="muted">For non-urgent items we use India Post / trusted couriers for next-day deliveries — we handle pickup & booking.</p>
+          <p class="muted-small">For non-urgent items we use trusted couriers for next-day deliveries — we handle pickup & booking.</p>
         </div>
       </div>
     </section>
 
+    <!-- HOW IT WORKS -->
     <section id="how" style="margin-top:28px">
       <h2>How it works</h2>
       <div class="steps">
@@ -242,7 +307,7 @@
           <div style="font-weight:800; width:40px; height:40px; border-radius:8px; background:var(--orange); color:white; display:flex; align-items:center; justify-content:center">1</div>
           <div>
             <h3 style="margin-bottom:6px">Book on WhatsApp</h3>
-            <div class="muted">Send a message with pickup address & item details. We confirm pickup time.</div>
+            <div class="muted-small">Send a message with pickup address & item details. We confirm pickup time.</div>
           </div>
         </div>
 
@@ -250,7 +315,7 @@
           <div style="font-weight:800; width:40px; height:40px; border-radius:8px; background:var(--orange); color:white; display:flex; align-items:center; justify-content:center">2</div>
           <div>
             <h3 style="margin-bottom:6px">Pickup in Mysuru</h3>
-            <div class="muted">Our local rider collects the parcel, verifies, and prepares it for handover.</div>
+            <div class="muted-small">Our local rider collects the parcel, verifies, and prepares it for handover.</div>
           </div>
         </div>
 
@@ -258,38 +323,41 @@
           <div style="font-weight:800; width:40px; height:40px; border-radius:8px; background:var(--orange); color:white; display:flex; align-items:center; justify-content:center">3</div>
           <div>
             <h3 style="margin-bottom:6px">Traveller / Cargo Transit</h3>
-            <div class="muted">Parcel travels via pre-booked travellers or trusted cargo services (VRL / Speed Post) depending on service selected.</div>
+            <div class="muted-small">Parcel travels via pre-booked travellers or trusted cargo services depending on service selected.</div>
           </div>
         </div>
       </div>
 
-      <div style="margin-top:12px" class="muted">Final delivery is either by our Bengaluru rider (door-to-door) or by station pickup depending on chosen service.</div>
+      <div style="margin-top:12px" class="muted-small">Final delivery is either by our Bengaluru rider (door-to-door) or by station pickup depending on chosen service.</div>
     </section>
-
+<br>
+    <!-- TRAVELLER SIGNUP -->
+    <br>
+    <div class="card center">
+            <div style="font-weight:700">Traveller ? <br> Earn extra money</div>
+            <div class="muted-small" style="margin-top:8px">Carry parcels on your regular trip and get paid for simple handovers.</div>
+            <div style="margin-top:12px">
+              <a class="btn btn-primary" id="joinTraveller" href="#traveller"><img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/whatsapp.svg" class="whatsapp-icon" alt="WhatsApp"> Join as Traveller</a>
+            </div>
+          </div>
     <section id="traveller" style="margin-top:28px">
-      <h2>Travellers — Earn While You Travel</h2>
+      <h2>Travellers — Earn While You Travel</h2> <br>
       <div style="display:flex; gap:18px; flex-wrap:wrap; align-items:flex-start">
         <div style="flex:1" class="card">
-          <h3>Why to join ?</h3>
-          <ul class="muted" style="margin-top:8px; line-height:1.6;">
-            <li>Earn extra money (₹50–₹70) every trip</li>
-            <li>No extra route — only carry small parcels</li>
-            <li>Verified handovers and instant payments</li>
+          <h3>Why to join?</h3>
+          <ul class="muted-small" style="margin-top:8px; line-height:1.6;">
+            <h5>Earn extra money (upto ₹100) every trip</h5> <br>
+            <h5>No extra route only carry parcels<h5><br>
+            <h5>Verified handovers and instant payments<h5><br>
+            <h5>Accept parcels only when you travel<h5><br>
+           <h5> Be part of a growing trusted delivery community<h5><br>
+           <h5>Safe & secure process — every parcel is veified before handover<h5><br>
           </ul>
-          <div style="margin-top:12px">
-            <a class="btn btn-primary" id="joinNow" href="#" role="button" aria-label="Join Traveller Group">
-              <svg class="wh-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-                <path fill="#ffffff" d="M20.52 3.48A11.8 11.8 0 0012 0C5.37 0 .13 5.24.13 11.87c0 2.09.55 4.11 1.6 5.9L0 24l6.44-1.66c1.68.92 3.56 1.4 5.53 1.4h.01c6.63 0 11.87-5.24 11.87-11.87 0-3.17-1.23-6.15-3.33-8.59zM12 20.5c-1.74 0-3.4-.47-4.86-1.36l-.35-.21L5 19l1.06-1.76-.22-.37A7.96 7.96 0 014.13 12c0-4.42 3.58-8 8-8 4.43 0 8 3.58 8 8 0 4.42-3.57 8-8 8z"/>
-                <path fill="#ffffff" d="M7.8 8.9c-.17-.5.02-1.05.44-1.36.11-.08.25-.15.39-.15.18 0 .34.07.47.2l.31.31c.12.12.18.27.17.43-.01.09-.04.2-.08.28-.26.46-.08 1.05.4 1.32 1.2.61 2.66 1.22 4.06.72.3-.12.63-.09.9.07.07.04.12.09.16.15.25.35.38.74.38 1.15 0 1.03-.3 1.98-.91 2.81-.79 1.08-1.91 1.64-3.24 1.64-1.95 0-3.78-1.16-4.65-3.02-.45-.98-.5-2.14-.14-3.2z"/>
-              </svg>
-              <span>Join as Traveller</span>
-            </a>
-          </div>
         </div>
-
+</section>
         <div style="flex:1" class="card">
           <h3>Quick signup</h3>
-          <div class="muted">Fill details and we will send you next-step instructions on WhatsApp.</div>
+          <div class="muted-small">Fill details and we will send you next-step instructions on WhatsApp.</div>
 
           <div class="form" style="margin-top:12px">
             <input id="tname" class="input" placeholder="Your name" />
@@ -300,146 +368,123 @@
               <option>Bengaluru → Mysuru</option>
               <option>Both</option>
             </select>
-            <button id="tsubmit" class="btn btn-primary">Sign up via WhatsApp</button>
+            <div style="width:47%;">
+              <button id="tsubmit" class="btn btn-primary" style="width:100%">Sign up via WhatsApp</button>
+            </div>
           </div>
-          <div class="tiny">We verify travellers before onboarding for safety.</div>
+          <div class="tiny" style="margin-top:10px">We verify travellers before onboarding for safety.</div>
         </div>
       </div>
-    </section>
+    
 
-    <section id="faq" style="margin-top:28px">
+    <!-- FAQ -->
+    <section id="faq">
       <h2>FAQ</h2>
       <div style="display:grid; gap:10px; margin-top:12px">
         <div class="card">
           <strong>Q: Why use TagGoXpress instead of booking Speed Post myself?</strong>
-          <div class="muted" style="margin-top:6px">A: We pick up from your door, handle booking & paperwork, provide a single contact for tracking and offer same-day service that Speed Post cannot match for urgent items.</div>
+          <div class="muted-small" style="margin-top:6px">A: We pick up from your door, handle booking & paperwork, provide a single contact for tracking and offer same-day service that Speed Post cannot match for urgent items.</div>
         </div>
-
         <div class="card">
           <strong>Q: What items can't be sent?</strong>
-          <div class="muted" style="margin-top:6px">A: Prohibited or hazardous items, perishables that require refrigeration, and high-value items without insurance. Contact us for clarifications.</div>
+          <div class="muted-small" style="margin-top:6px">A: Prohibited or hazardous items, perishables that require refrigeration, and high-value items without insurance. Contact us for clarifications.</div>
         </div>
-
         <div class="card">
           <strong>Q: What if delivery fails?</strong>
-          <div class="muted" style="margin-top:6px">A: We have defined re-delivery rules and will contact sender/receiver to reschedule. Refunds depend on the chosen service and reason for failure.</div>
+          <div class="muted-small" style="margin-top:6px">A: We have defined re-delivery rules and will contact sender/receiver to reschedule. Refunds depend on the chosen service and reason for failure.</div>
         </div>
       </div>
     </section>
 
+    <!-- Footer -->
     <footer>
-      <div>
-        <div style="font-weight:800">TagGoXpress</div>
-        <div class="muted" style="margin-top:6px">Mysuru ⇆ Bengaluru • Same-Day & Next-Day</div>
-      </div>
+      <div class="footer-brand">TagGoXpress</div>
+      <span class="muted">Mysuru ⇆ Bengaluru • Same-Day & Next-Day</span>
 
-      <div class="socials">
-        <a class="tiny" href="#" id="whatsappFooter" aria-label="WhatsApp contact">
-          <svg class="wh-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-            <path fill="#111" d="M20.52 3.48A11.8 11.8 0 0012 0C5.37 0 .13 5.24.13 11.87c0 2.09.55 4.11 1.6 5.9L0 24l6.44-1.66c1.68.92 3.56 1.4 5.53 1.4h.01c6.63 0 11.87-5.24 11.87-11.87 0-3.17-1.23-6.15-3.33-8.59zM12 20.5c-1.74 0-3.4-.47-4.86-1.36l-.35-.21L5 19l1.06-1.76-.22-.37A7.96 7.96 0 014.13 12c0-4.42 3.58-8 8-8 4.43 0 8 3.58 8 8 0 4.42-3.57 8-8 8z"/>
-            <path fill="#111" d="M7.8 8.9c-.17-.5.02-1.05.44-1.36.11-.08.25-.15.39-.15.18 0 .34.07.47.2l.31.31c.12.12.18.27.17.43-.01.09-.04.2-.08.28-.26.46-.08 1.05.4 1.32 1.2.61 2.66 1.22 4.06.72.3-.12.63-.09.9.07.07.04.12.09.16.15.25.35.38.74.38 1.15 0 1.03-.3 1.98-.91 2.81-.79 1.08-1.91 1.64-3.24 1.64-1.95 0-3.78-1.16-4.65-3.02-.45-.98-.5-2.14-.14-3.2z"/>
+      <!-- Footer socials — WhatsApp inline SVG and inline Facebook/Instagram -->
+      <div class="socials" aria-hidden="false">
+        <a href="#" id="whatsappFooter" class="social-btn" aria-label="WhatsApp contact" title="WhatsApp">
+          <!-- Inline WhatsApp SVG so we can color with fill -->
+          <svg class="social-img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M20.52 3.48A11.93 11.93 0 0 0 12.03.01 11.96 11.96 0 0 0 .97 11.99c0 2.11.55 4.18 1.6 6.02L.02 24l6.29-2.5a11.93 11.93 0 0 0 5.73 1.48h.01c6.6 0 11.99-5.36 11.99-11.99 0-3.21-1.25-6.22-3.82-8.01zM12.03 21.5h-.01a9.29 9.29 0 0 1-4.73-1.28l-.34-.2-3.73 1.48 1.01-3.63-.22-.37A9.31 9.31 0 1 1 21.34 12 9.25 9.25 0 0 1 12.03 21.5zM17.1 14.7c-.28-.14-1.66-.82-1.92-.92-.26-.1-.45-.14-.64.14-.19.28-.74.92-.91 1.11-.17.19-.34.21-.62.07-.28-.14-1.18-.43-2.24-1.38-.83-.74-1.39-1.65-1.55-1.93-.16-.28-.02-.43.12-.57.12-.12.28-.32.42-.48.14-.16.19-.28.28-.46.09-.19.04-.36-.02-.5-.06-.14-.64-1.53-.88-2.09-.23-.55-.47-.48-.64-.49l-.55-.01c-.19 0-.5.07-.77.36-.26.29-1 1-1 2.45 0 1.45 1.04 2.86 1.18 3.06.14.2 2.03 3.18 4.92 4.46 2.89 1.28 2.89.85 3.41.8.52-.05 1.66-.68 1.9-1.34.24-.66.24-1.22.17-1.34-.07-.12-.26-.19-.54-.33z"/>
           </svg>
-          <span style="margin-left:6px">WhatsApp: +91 76193 28779</span>
+        </a>
+
+        <a href="https://www.facebook.com/share/16BbU6FBYr/" target="_blank" rel="noopener" class="social-btn" aria-label="Facebook" title="Facebook">
+          <svg class="social-img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M22.68 0H1.32C.59 0 0 .59 0 1.32v21.36C0 23.41.59 24 1.32 24h11.49v-9.29H9.69v-3.62h3.12V8.41c0-3.1 1.89-4.79 4.66-4.79 1.32 0 2.46.1 2.8.14v3.24l-1.92.001c-1.51 0-1.8.72-1.8 1.77v2.32h3.59l-.47 3.62h-3.12V24h6.12c.73 0 1.32-.59 1.32-1.32V1.32C24 .59 23.41 0 22.68 0"/>
+          </svg>
+        </a>
+
+        <a href="https://www.instagram.com/taggoxpress?igsh=MWVjaHFrenlqemlrYQ==" target="_blank" rel="noopener" class="social-btn" aria-label="Instagram" title="Instagram">
+          <svg class="social-img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M7.75 2h8.5C19.55 2 22 4.45 22 7.75v8.5C22 19.55 19.55 22 16.25 22h-8.5C4.45 22 2 19.55 2 16.25v-8.5C2 4.45 4.45 2 7.75 2zm0 2C5.68 4 4 5.68 4 7.75v8.5C4 18.32 5.68 20 7.75 20h8.5c2.07 0 3.75-1.68 3.75-3.75v-8.5C20 5.68 18.32 4 16.25 4h-8.5zm4.25 3a5.25 5.25 0 1 1 0 10.5A5.25 5.25 0 0 1 12 7zm0 2a3.25 3.25 0 1 0 0 6.5 3.25 3.25 0 0 0 0-6.5zm5.5-.88a1.12 1.12 0 1 1-2.25 0 1.12 1.12 0 0 1 2.25 0z"/>
+          </svg>
         </a>
       </div>
-      
     </footer>
   </div>
-  
 
-  <!-- ======= Robust WhatsApp link handlers (works on desktop & mobile) ======= -->
   <script>
-  (function(){
-    const WHATSAPP_NUMBER = '+917619328779';
+    // Run when DOM is ready
+    document.addEventListener('DOMContentLoaded', function(){
+      const WHATSAPP_NUMBER = '+917619328779';
+      const bookMsg = encodeURIComponent("Hello TagGoXpress, I want to book a Same-day delivery from Mysuru to Bengaluru. Pickup address: [your address]. Item: [short description].");
+      const travellerMsg = encodeURIComponent("Hi, I want to join TagGoXpress traveller group. Name: [your name]. Route: Mysuru ↔ Bengaluru. Phone: [your phone].");
 
-    function whatsappLink(number, text){
-      const cleaned = number.replace(/\+/g,'').replace(/\s/g,'');
-      return "https://wa.me/" + cleaned + "?text=" + text;
-    }
-
-    const bookMsg = encodeURIComponent("Hello TagGoXpress, I want to book a Same-day delivery from Mysuru to Bengaluru. Pickup address: [your address]. Item: [short description].");
-    const travellerMsg = encodeURIComponent("Hi, I want to join TagGoXpress traveller group. Name: [your name]. Route: Mysuru ↔ Bengaluru. Phone: [your phone].");
-
-    function $id(id){ return document.getElementById(id) || null; }
-    function openWa(url){
-      try{
-        window.open(url, '_blank', 'noopener,noreferrer');
-      }catch(e){
-        window.location.href = url;
+      function whatsappLink(number, text){
+        return "https://wa.me/" + number.replace(/\+/g,'').replace(/\s/g, '') + "?text=" + text;
       }
-    }
 
-    const bookNowEl      = $id('bookNow');
-    const whatsappTopEl  = $id('whatsappTop');
-    const whatsappFooterEl = $id('whatsappFooter');
-    const joinTravellerEl = $id('joinTraveller');
-    const joinNowEl       = $id('joinNow');
-    const tsubmitEl       = $id('tsubmit');
+      const bookNow = document.getElementById('bookNow');
+      const whatsappTop = document.getElementById('whatsappTop');
+      const whatsappFooter = document.getElementById('whatsappFooter');
+      const joinTraveller = document.getElementById('joinTraveller');
+      const ts = document.getElementById('tsubmit');
 
-    const bookUrl = whatsappLink(WHATSAPP_NUMBER, bookMsg);
-    const travellerUrl = whatsappLink(WHATSAPP_NUMBER, travellerMsg);
+      if(bookNow) bookNow.href = whatsappLink(WHATSAPP_NUMBER, bookMsg);
+      if(whatsappTop) whatsappTop.href = whatsappLink(WHATSAPP_NUMBER, bookMsg);
+      if(whatsappFooter) whatsappFooter.href = whatsappLink(WHATSAPP_NUMBER, bookMsg);
+      if(joinTraveller) joinTraveller.href = whatsappLink(WHATSAPP_NUMBER, travellerMsg);
 
-    if(bookNowEl) {
-      bookNowEl.setAttribute('href', bookUrl);
-      bookNowEl.addEventListener('click', function(e){
-        if(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-        e.preventDefault();
-        openWa(bookUrl);
-      });
-    }
+      if(joinTraveller){
+        joinTraveller.addEventListener('click', function(e){ e.preventDefault(); window.open(whatsappLink(WHATSAPP_NUMBER, travellerMsg), '_blank'); });
+      }
 
-    if(whatsappTopEl){
-      whatsappTopEl.setAttribute('href', bookUrl);
-      whatsappTopEl.addEventListener('click', function(e){
-        if(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-        e.preventDefault();
-        openWa(bookUrl);
-      });
-    }
+      if(ts){
+        ts.addEventListener('click', function(e){
+          e.preventDefault();
+          const name = document.getElementById('tname').value || '[your name]';
+          const phone = document.getElementById('tphone').value || '[your phone]';
+          const route = document.getElementById('troute').value || 'Route not specified';
+          const message = encodeURIComponent(`Hi, I want to join TagGoXpress traveller group. Name: ${name}. Route: ${route}. Phone: ${phone}.`);
+          window.open(whatsappLink(WHATSAPP_NUMBER, message), '_blank');
+        });
+      }
 
-    if(whatsappFooterEl){
-      whatsappFooterEl.setAttribute('href', bookUrl);
-      whatsappFooterEl.addEventListener('click', function(e){
-        if(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-        e.preventDefault();
-        openWa(bookUrl);
-      });
-    }
+      // Mobile menu toggle (uses class .open to control visibility)
+      const menuToggle = document.getElementById('menuToggle');
+      const navLinks  = document.getElementById('navLinks');
+      if(menuToggle && navLinks){
+        menuToggle.addEventListener('click', function(){
+          const expanded = this.getAttribute('aria-expanded') === 'true';
+          this.setAttribute('aria-expanded', String(!expanded));
+          navLinks.classList.toggle('open');
+        });
 
-    if(joinTravellerEl){
-      joinTravellerEl.setAttribute('href', travellerUrl);
-      joinTravellerEl.addEventListener('click', function(e){
-        if(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-        e.preventDefault();
-        openWa(travellerUrl);
-      });
-    }
+        // ensure correct state on resize: close mobile menu when switching to desktop
+        window.addEventListener('resize', function(){
+          if(window.innerWidth >= 800){
+            navLinks.classList.remove('open');
+            menuToggle.setAttribute('aria-expanded','false');
+          }
+        });
+      }
 
-    if(joinNowEl){
-      joinNowEl.setAttribute('href', travellerUrl);
-      joinNowEl.addEventListener('click', function(e){
-        if(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-        e.preventDefault();
-        openWa(travellerUrl);
-      });
-    }
-
-    if(tsubmitEl){
-      tsubmitEl.addEventListener('click', function(e){
-        e.preventDefault();
-        const name  = (document.getElementById('tname') || {}).value || '';
-        const phone = (document.getElementById('tphone') || {}).value || '';
-        const route = (document.getElementById('troute') || {}).value || '';
-        if(!name.trim() || !phone.trim() || !route.trim()){
-          alert('Please enter name, phone and route to sign up.');
-          return;
-        }
-        const msg = encodeURIComponent("Traveller signup: Name: " + name.trim() + " | Phone: " + phone.trim() + " | Route: " + route.trim());
-        openWa(whatsappLink(WHATSAPP_NUMBER, msg));
-      });
-    }
-
-  })();
+      // footer year (if you later add an element with id="year")
+      const y = new Date().getFullYear();
+      const yearEl = document.getElementById('year'); if(yearEl) yearEl.textContent = y;
+    });
   </script>
 </body>
 </html>
